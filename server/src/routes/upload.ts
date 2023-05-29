@@ -40,7 +40,7 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     const fileName = fileId.concat(extension)
 
-    const filePath = resolve(__dirname, '../../uploads/', fileName)
+    const filePath = resolve(__dirname, '../../tmp/', fileName)
 
     if (mimeTypeRegexImage.test(upload.mimetype)) {
       await sharp(buffer).webp({ quality: 20 }).toFile(filePath)
