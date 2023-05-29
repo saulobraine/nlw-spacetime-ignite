@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "lint": "eslint src --ext .ts --fix",
-    "build": "tsup src",
+    "vercel-build": "npx prisma migrate deploy",
     "generate": "prisma generate",
     "postbuild": "npm run generate"
   },
@@ -23,7 +23,6 @@
     "eslint": "^8.40.0",
     "pre-commit": "^1.2.2",
     "prisma": "4.14.1",
-    "tsup": "^6.7.0",
     "tsx": "^3.12.7",
     "typescript": "^5.0.4"
   },
