@@ -8,8 +8,8 @@ import { r2 } from '../lib/r2'
 import { extname, resolve } from 'node:path'
 import { createWriteStream } from 'node:fs'
 import sharp from 'sharp'
-
-const fs = require('fs/promises')
+const fs = require('fs')
+const asyncFS = require('fs/promises')
 const pump = promisify(pipeline)
 
 export async function uploadRoutes(app: FastifyInstance) {
@@ -55,7 +55,7 @@ export async function uploadRoutes(app: FastifyInstance) {
       await pump(upload.file, writeStream)
     }
 
-    const data = await fs.readFile(filePath)
+    const data = await asyncFS.readFile(filePath)
 
     const signedUrl = await getSignedUrl(
       r2,
@@ -72,7 +72,7 @@ export async function uploadRoutes(app: FastifyInstance) {
       body: data,
     })
 
-    await fs.unlink(filePath)
+    await asyncFS.unlink(filePath)
 
     const fileUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL?.concat(`/${fileName}`)
 
