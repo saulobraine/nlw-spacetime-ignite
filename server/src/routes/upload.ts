@@ -40,6 +40,12 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     const fileName = fileId.concat(extension)
 
+    const dir = './tmp'
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir)
+    }
+
     const filePath = resolve(__dirname, '../../tmp/', fileName)
 
     if (mimeTypeRegexImage.test(upload.mimetype)) {
