@@ -1,24 +1,12 @@
-import { useCallback, useEffect } from 'react'
-import { ImageBackground, Text, View, TouchableOpacity } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
+import { useEffect } from 'react'
+import { Text, View, TouchableOpacity } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
-import { styled } from 'nativewind'
 import * as SecureStore from 'expo-secure-store'
 import { useRouter } from 'expo-router'
 
-import blurBg from '../src/assets/luz.png'
-import Stripes from '../src/assets/stripes.svg'
 import Logo from '../src/assets/logo.svg'
 import { api } from '../src/lib/api'
-import {
-  useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from '@expo-google-fonts/roboto'
-import { BaiJamjuree_700Bold } from '@expo-google-fonts/bai-jamjuree'
-
-const StyledStripes = styled(Stripes)
 
 SplashScreen.preventAutoHideAsync()
 
@@ -32,19 +20,6 @@ const discovery = {
 
 export default function App() {
   const router = useRouter()
-
-  const [hasLoadedFonts] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-    BaiJamjuree_700Bold,
-  })
-
-  const onLayoutRootView = useCallback(async () => {
-    if (hasLoadedFonts) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      await SplashScreen.hideAsync()
-    }
-  }, [hasLoadedFonts])
 
   const [, response, signInWithGithub] = useAuthRequest(
     {
@@ -77,22 +52,8 @@ export default function App() {
     }
   }, [response])
 
-  if (!hasLoadedFonts) {
-    return null
-  }
-
   return (
-    <ImageBackground
-      source={blurBg}
-      className="relative flex-1 bg-gray-900 p-10"
-      imageStyle={{
-        position: 'absolute',
-        left: '-150%',
-      }}
-      onLayout={onLayoutRootView}
-    >
-      <StyledStripes className="absolute left-2" />
-
+    <View className="flex-1 items-center p-10">
       <View className="flex-1 items-center justify-center gap-6">
         <Logo />
         <View className="space-y-2">
@@ -118,7 +79,6 @@ export default function App() {
       <Text className="text-center font-body text-sm leading-relaxed text-gray-200">
         Feito com 💜 no NLW da Rocketseat
       </Text>
-      <StatusBar style="light" translucent />
-    </ImageBackground>
+    </View>
   )
 }

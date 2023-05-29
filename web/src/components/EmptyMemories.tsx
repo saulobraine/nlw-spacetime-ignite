@@ -1,11 +1,16 @@
+import Link from 'next/link'
+
 export function EmptyMemories() {
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <p className="w-[360px] text-center leading-relaxed">
+    <div className="flex flex-1 items-center justify-center p-16">
+      <p className="w-[360px] text-center leading-relaxed text-gray-100">
         Você ainda não registrou nenhuma lembrança comece a{' '}
-        <a href="" className="underline transition-all hover:text-gray-50">
+        <Link
+          href="/memories/new"
+          className="underline transition-all hover:text-gray-50"
+        >
           criar agora!
-        </a>
+        </Link>
       </p>
     </div>
   )

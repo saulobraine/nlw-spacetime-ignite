@@ -7,12 +7,24 @@ interface User {
   avatarUrl: string
 }
 
-export function getUser(): User {
+export function getToken() {
   const token = cookies().get('token')?.value
 
   if (!token) {
     throw new Error('Unauthenticated.')
   }
+
+  return token
+}
+
+export function isUserAuthenticated() {
+  const isUserAuthenticated = cookies().has('token')
+
+  return isUserAuthenticated
+}
+
+export function getUser(): User {
+  const token = getToken()
 
   const user: User = decode(token)
 

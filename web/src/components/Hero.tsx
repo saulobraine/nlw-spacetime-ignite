@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { CalendarPlus } from 'lucide-react'
 
 import nlwLogo from '../assets/logo.svg'
+import Link from 'next/link'
 
 export function Hero() {
   return (
@@ -18,12 +19,12 @@ export function Hero() {
         </p>
       </div>
 
-      <a
-        href=""
+      <Link
+        href="/memories/new"
         className="inline-flex items-center gap-2 rounded-xl bg-green-500 px-5 py-3 font-alt text-sm uppercase leading-none text-black duration-1000 ease-out hover:rounded-2xl hover:bg-black hover:text-green-500 hover:duration-500"
       >
         <CalendarPlus size={15} /> CADASTRAR LEMBRANÇA
-      </a>
+      </Link>
     </div>
   )
 }

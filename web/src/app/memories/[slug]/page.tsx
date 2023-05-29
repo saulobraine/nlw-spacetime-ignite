@@ -1,43 +1,44 @@
-import { EmptyMemories } from '@/components/EmptyMemories'
 import { api } from '@/lib/api'
-import { getToken, isUserAuthenticated } from '@/lib/auth'
+import { getToken } from '@/lib/auth'
+import { ChevronLeft, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 import dayjs from 'dayjs'
 import ptBR from 'dayjs/locale/pt-br'
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 dayjs.locale(ptBR)
+
 interface Memory {
   id: string
   createdAt: string
-  excerpt: string
+  content: string
   coverUrl: string
 }
 
-export default async function Home() {
-  if (!isUserAuthenticated()) {
-    return <EmptyMemories />
-  }
-
-  const response = await api.get('/memories', {
+export default async function Page({ params }: { params: { slug: string } }) {
+  const response = await api.get(`/memories/${params.slug}`, {
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   })
 
-  const memories: Memory[] = response.data
-
-  if (memories.length === 0) {
-    return <EmptyMemories />
-  }
+  const memory: Memory = response.data
 
   return (
-    <div className="flex flex-col gap-10 p-8">
-      {memories.map((memory) => {
-        return (
-          <div key={memory.id} className="space-y-4">
-            <time className="-ml-8 flex items-center gap-2 text-sm text-gray-100 before:h-px before:w-5 before:bg-gray-50">
+    <div className="flex flex-1 flex-col gap-4 p-16">
+      <Link
+        href="/"
+        className="flex items-center gap-1 text-sm text-gray-200 hover:text-gray-100"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        voltar à timelime
+      </Link>
+
+      {memory && (
+        <>
+          <hr />
+          <div className="space-y-4">
+            <time className="flex items-center gap-2 text-sm text-gray-100 before:h-px before:w-5 before:bg-gray-50">
               {dayjs(memory.createdAt).format('D[ de ]MMMM[, ]YYYY')}
             </time>
             <Image
@@ -48,7 +49,7 @@ export default async function Home() {
               className="aspect-video w-full rounded-lg object-cover"
             />
             <div className="text-lg leading-relaxed text-gray-100">
-              {memory.excerpt}
+              {memory.content}
             </div>
 
             <Link
@@ -58,8 +59,8 @@ export default async function Home() {
               Ler mais <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        )
-      })}
+        </>
+      )}
     </div>
   )
 }
