@@ -1,16 +1,10 @@
 import { randomUUID } from 'node:crypto'
 import { FastifyInstance } from 'fastify'
-import { pipeline } from 'node:stream'
-import { promisify } from 'node:util'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { r2 } from '../lib/r2'
-import { extname, resolve } from 'node:path'
-import { createWriteStream } from 'node:fs'
+import { extname } from 'node:path'
 import sharp from 'sharp'
-const fs = require('fs')
-const asyncFS = require('fs/promises')
-const pump = promisify(pipeline)
 
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request, reply) => {
@@ -40,22 +34,13 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     const fileName = fileId.concat(extension)
 
-    const dir = './tmp'
-
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir)
-    }
-
-    const filePath = resolve(__dirname, '../../tmp/', fileName)
+    let data
 
     if (mimeTypeRegexImage.test(upload.mimetype)) {
-      await sharp(buffer).webp({ quality: 20 }).toFile(filePath)
+      data = await sharp(buffer).webp({ quality: 30 }).toBuffer()
     } else {
-      const writeStream = createWriteStream(filePath)
-      await pump(upload.file, writeStream)
+      data = buffer
     }
-
-    const data = await asyncFS.readFile(filePath)
 
     const signedUrl = await getSignedUrl(
       r2,
@@ -71,8 +56,6 @@ export async function uploadRoutes(app: FastifyInstance) {
       method: 'PUT',
       body: data,
     })
-
-    await asyncFS.unlink(filePath)
 
     const fileUrl = process.env.CLOUDFLARE_R2_PUBLIC_URL?.concat(`/${fileName}`)
 
